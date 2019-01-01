@@ -60,9 +60,9 @@ const StyledHeader = styled.header`
 
 const Header = props => (
   <StyledHeader>
-    <div className="bar">
+    <div className='bar'>
       <Logo>
-        <Link href="/">
+        <Link href='/'>
           <a>Sick Fits</a>
         </Link>
       </Logo>
@@ -70,7 +70,7 @@ const Header = props => (
       <Nav />
     </div>
 
-    <div className="sub-bar">
+    <div className='sub-bar'>
       <p>Search</p>
     </div>
 

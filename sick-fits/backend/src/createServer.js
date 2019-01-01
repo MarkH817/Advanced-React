@@ -1,13 +1,13 @@
-const { GraphQLServer } = require("graphql-yoga");
-const { resolve } = require("path");
+const { GraphQLServer } = require('graphql-yoga')
+const { resolve } = require('path')
 
-const { Mutation } = require("./resolvers/Mutation");
-const { Query } = require("./resolvers/Query");
-const { db } = require("./db");
+const { Mutation } = require('./resolvers/Mutation')
+const { Query } = require('./resolvers/Query')
+const { db } = require('./db')
 
 function createServer() {
   return new GraphQLServer({
-    typeDefs: resolve(__dirname, "./schema.graphql"),
+    typeDefs: resolve(__dirname, './schema.graphql'),
 
     resolvers: {
       Mutation,
@@ -20,7 +20,7 @@ function createServer() {
 
     // Used for forwardTo('db') function from 'prisma-binding'
     context: req => ({ ...req, db })
-  });
+  })
 }
 
-module.exports = { createServer };
+module.exports = { createServer }
