@@ -5,7 +5,7 @@ import Items from '../components/Items'
 const Home = props => {
   return (
     <div>
-      <Items />
+      <Items page={Number.parseInt(props.query.page) || 1} />
     </div>
   )
 }

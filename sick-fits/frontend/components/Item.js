@@ -5,6 +5,8 @@ import formatMoney from '../lib/formatMoney'
 import Title from './styles/Title'
 import ItemStyles from './styles/ItemStyles'
 import PriceTag from './styles/PriceTag'
+import DeleteItem from './DeleteItem'
+
 /**
  * @param {object} props
  * @param {object} props.item
@@ -47,7 +49,7 @@ const Item = props => {
           <a>Edit</a>
         </Link>
         <button>Add To Cart</button>
-        <button>Delete</button>
+        <DeleteItem id={item.id}>Delete</DeleteItem>
       </div>
     </ItemStyles>
   )

@@ -1,3 +1,3 @@
-import Home from "./index";
+import Item from './index'
 
-export default Home;
+export default Item

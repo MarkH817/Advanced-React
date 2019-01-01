@@ -29,9 +29,9 @@ export const CREATE_ITEM_MUTATION = gql`
 
 export class CreateItem extends Component {
   state = {
-    title: 'Toast',
-    description: 'It is just double baked dough, if you think about it.',
-    price: 150,
+    title: '',
+    description: '',
+    price: 0,
     image: '',
     largeImage: ''
   }
@@ -58,7 +58,6 @@ export class CreateItem extends Component {
     )
 
     const file = await res.json()
-    console.log(file)
 
     this.setState({
       image: file.secure_url,
