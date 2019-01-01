@@ -1,13 +1,27 @@
-const { resolve } = require("path");
-require("dotenv").config({ path: resolve(__dirname, "../variables.env") });
+const cookieParser = require('cookie-parser')
+const { resolve } = require('path')
+const jwt = require('jsonwebtoken')
+require('dotenv').config({ path: resolve(__dirname, '../variables.env') })
 
-const { createServer } = require("./createServer");
-const { db } = require("./db");
+const { createServer } = require('./createServer')
+const { db } = require('./db')
 
-const server = createServer();
+const server = createServer()
+server.express.use(cookieParser())
 
-// TODO: Use express middleware to handle cookies (JWT)
-// TODO: Use express middleware to populate current user
+// Decode the JWT to get the user Id on each request
+server.express.use((req, res, next) => {
+  const { token } = req.cookies
+
+  if (token) {
+    const { id } = jwt.verify(token, process.env.APP_SECRET)
+
+    // Place the user Id on the req for future requests to access
+    req.userId = id
+  }
+
+  next()
+})
 
 server.start(
   {
@@ -19,6 +33,6 @@ server.start(
   details => {
     console.log(
       `Server is now running on port http://localhost:${details.port}/`
-    );
+    )
   }
-);
+)
