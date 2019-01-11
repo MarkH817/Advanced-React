@@ -5,15 +5,23 @@ const { promisify } = require('util')
 
 const { db } = require('../db')
 const { transport, makeANiceEmail } = require('../mail')
+const { hasPermission } = require('../utils')
 
 const asyncRandomBytes = promisify(randomBytes)
 
 const Mutation = {
-  // TODO: Check for authentication
   async createItem(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw Error('You must be logged in to do that!')
+    }
+
     const item = await db.mutation.createItem(
       {
-        data: { ...args }
+        data: {
+          // Connects the User to the created Item
+          user: { connect: { id: ctx.request.userId } },
+          ...args
+        }
       },
       info
     )
@@ -40,10 +48,17 @@ const Mutation = {
     const where = { id: args.id }
 
     // 1. Find the item
-    const item = await db.query.item({ where }, `{ id title }`)
+    const item = await db.query.item({ where }, `{ id title user { id } }`)
 
-    // 2. Check for permissions or item ownership
-    // TODO
+    // 2. Check for item ownership or permissions
+    const ownsItem = item.user.id === ctx.request.userId
+    const hasPermissions = ctx.request.user.permissions.some(permission =>
+      ['ADMIN', 'ITEMDELETE'].includes(permission)
+    )
+
+    if (!ownsItem && !hasPermissions) {
+      throw Error(`You don't have permission to do that!`)
+    }
 
     // 3. Delete it
     return db.mutation.deleteItem({ where }, info)
@@ -202,6 +217,28 @@ const Mutation = {
 
     // 8. Return the user
     return updatedUser
+  },
+
+  async updatePermissions(parent, args, ctx, info) {
+    // 1. Check if user is logged in
+    // 2. Get the current User
+    const currentUser = ctx.request.user
+
+    if (!currentUser) {
+      throw Error('You must be logged in!')
+    }
+
+    // 3. Check if they have permission to do so
+    hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE'])
+
+    // 4. Perform update
+    return db.mutation.updateUser(
+      {
+        data: { permissions: { set: args.permissions } },
+        where: { id: args.userId }
+      },
+      info
+    )
   }
 }
 

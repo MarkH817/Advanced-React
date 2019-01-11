@@ -13,10 +13,6 @@ export const CURRENT_USER_QUERY = gql`
   }
 `
 
-/**
- * @param {object} props
- * @param {Function} props.children
- */
 const User = props => (
   <Query query={CURRENT_USER_QUERY}>{payload => props.children(payload)}</Query>
 )
